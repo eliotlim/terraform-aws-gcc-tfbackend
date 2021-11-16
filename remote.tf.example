@@ -1,0 +1,15 @@
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+    }
+  }
+
+  backend "s3" {
+    region         = var.region
+    bucket         = var.bucket
+    key            = var.key
+    encrypt        = var.encrypt
+    dynamodb_table = var.dynamodb_table
+  }
+}
