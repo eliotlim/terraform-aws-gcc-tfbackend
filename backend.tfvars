@@ -1,5 +1,5 @@
-Agency-Code  = "gt"
-Project-Code = "abc"
+Agency-Code  = "example"
+Project-Code = "demo"
 Environment  = "dev"
 Zone         = "dz"
 Tier         = "na"

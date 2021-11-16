@@ -20,8 +20,8 @@ First, populate your `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment
 Configure your project's `backend.tfvars` file
 
 ```terraform
-Agency-Code  = "gt"
-Project-Code = "abc"
+Agency-Code  = "example"
+Project-Code = "demo"
 Environment  = "dev"
 Zone         = "dz"
 Tier         = "na"
