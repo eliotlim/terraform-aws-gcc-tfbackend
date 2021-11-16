@@ -5,6 +5,7 @@ Tired of manually creating and managing S3 backends for your Terraform projects?
 ## What does this do?
 
 This project:
+
 1. creates resources for a Terraform backend on S3 / DynamoDB; and
 2. migrates its own state to the `default` workspace.
 
@@ -145,13 +146,17 @@ No requirements.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| Agency-Code | The agency initials | `string` | n/a | yes |
+| Environment | The environment (e.g. tXX, dev, stg, uat, prd) | `string` | n/a | yes |
+| Project-Code | The project code | `string` | n/a | yes |
+| Tier | Tier identifier (e.g. web, gut, app, it, db, svc, na) | `string` | `null` | no |
+| Zone | The zone (e.g. iz, ez, mz ,dz) | `string` | `null` | no |
 | bucket | Name of the S3 Bucket | `string` | `""` | no |
 | dynamodb\_table | Name of the DynamoDB table | `string` | `""` | no |
-| encrypt | Encrypt the contents of the bucket | `bool` | `false` | no |
+| encrypt | Encrypt the contents of the bucket | `bool` | `true` | no |
 | key | Key to use for the Terraform state file | `string` | `"terraform.tfstate"` | no |
 | prevent\_destroy | Prevent accidental destruction of the Terraform state bucket | `bool` | `true` | no |
 | region | AWS Region selection | `string` | `"ap-southeast-1"` | no |
-| tags | GCC-style resource tags | `map(string)` | `{}` | no |
 | versioning | Enable versioning on the bucket | `bool` | `true` | no |
 
 ## Outputs
@@ -163,3 +168,4 @@ No requirements.
 | encrypt | Encrypt the contents of the bucket |
 | key | Key to use for the Terraform state file |
 | region | AWS Region selection |
+
