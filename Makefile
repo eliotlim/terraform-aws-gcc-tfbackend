@@ -2,23 +2,20 @@ terraform:=terraform
 backend_tfvars:=backend.tfvars
 terraform_files:=main.tf variables.tf outputs.tf
 
-help:
+help: spacing:=20
+
+help: ## Print this help message
 	@echo "tfbackend state: " $(shell test -f 'local.tf' && echo 'LOCAL') $(shell test -f 'remote.tf' && echo 'REMOTE')
 	@echo ""
 	@echo "Available targets:"
-	@echo "\tbackup\t\t Create a local backup copy of terraform.tfstate"
-	@echo "\tdeploy\t\t Deploy backend infrastructure"
-	@echo "\tdestroy\t\t Destroy backend infrastructure"
-	@echo "\tswitch-local\t Store Terraform state in the LOCAL backend"
-	@echo "\tswitch-remote\t Store Terraform state in the REMOTE backend"
-	@echo "\tsync\t\t Synchronise and initialise the Terraform backend using an existing 'backend.tfbackend' file"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-$(spacing)s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "Run 'make deploy' to generate a Terraform state backend configuration from variables defined in ${backend_tfvars}\n"
 
 # Targets: Switch to the local backend or the remote backend
 .PHONY: switch-local switch-remote
-switch-local: sync-before local.tf sync-after
-switch-remote: backend.tfbackend remote.tf sync-after
+switch-local: sync-before local.tf sync-after ## Store Terraform state in the LOCAL backend
+switch-remote: backend.tfbackend remote.tf sync-after ## Store Terraform state in the REMOTE backend
 
 # Build the backend configuration for use in other projects
 # The backend infrastructure is built step-by-step onto the currently configured state backend
@@ -43,7 +40,7 @@ remote.tf: remote.tf.example
 
 # Synchronise with an existing backend.tfbackend files
 .PHONY: sync sync-before sync-after
-sync: remote.tf sync-after
+sync: remote.tf sync-after ## Synchronise and initialise the Terraform backend using an existing 'backend.tfbackend' file
 
 # Synchronise the selected backend 'LOCAL' or 'REMOTE' with the appropriate backend configuration
 sync-before: backend_config=$(shell test -f 'remote.tf' && echo '--backend-config=backend.tfbackend')
@@ -60,7 +57,7 @@ sync-after:
 
 # backup, clean, destroy, and distclean
 .PHONY: backup clean deploy destroy distclean
-backup: sync-before
+backup: sync-before ## Create a local backup copy of terraform.tfstate
 	$(terraform) state pull > backup.tfstate
 	@echo "Workspace 'default' backed up to 'backup.tfstate'"
 
@@ -68,12 +65,12 @@ clean:
 	@echo "Run 'make destroy' to destroy the remote backend defined in ${backend_tfvars}"
 	@echo "Run 'make distclean' to delete all working files and prepare for distribution"
 
-deploy: backend.tfbackend
+deploy: backend.tfbackend ## Deploy backend infrastructure
 
-destroy: switch-local
+destroy: switch-local ## Destroy backend infrastructure
 	# Destroy all the IaC resources for this backend
 	$(terraform) destroy --auto-approve --var-file=$(backend_tfvars)
 
-distclean:
+distclean: ## Delete generated files, restoring working directory to distribution-ready state
 	# Cleanup and make module distribution-ready
 	rm -rf local.tf remote.tf errored.tfstate terraform.tfstate terraform.tfstate.d terraform.tfstate.backup .terraform .terraform.lock.hcl
