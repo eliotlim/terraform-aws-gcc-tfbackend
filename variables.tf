@@ -17,11 +17,6 @@ variable "tags" {
     condition     = can(lookup(var.tags, "Project-Code"))
     error_message = "The Project-Code tag should be specified (e.g. demo, abc3)."
   }
-
-  validation {
-    condition     = can(lookup(var.tags, "Environment"))
-    error_message = "The Environment tag should be specified (e.g. tXX, dev, stg, uat, prd)."
-  }
 }
 
 # Configuration for Backend Resources

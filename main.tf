@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 locals {
-  environment = "${var.tags["Account-Type"]}-${var.tags["Agency-Code"]}-${var.tags["Project-Code"]}-${var.tags["Environment"]}"
+  environment = "${var.tags["Agency-Code"]}-${var.tags["Account-Type"]}-${var.tags["Project-Code"]}"
 }
 
 resource "aws_s3_bucket" "state" {
