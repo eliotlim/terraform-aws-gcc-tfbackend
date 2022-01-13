@@ -2,18 +2,12 @@ provider "aws" {
   region = var.region
 }
 
-module "tags" {
-  source = "github.com/eliotlim/terraform-aws-gcc-tags"
-
-  Agency-Code  = var.Agency-Code
-  Project-Code = var.Project-Code
-  Environment  = var.Environment
-  Zone         = var.Zone
-  Tier         = var.Tier
+locals {
+  environment = "${var.tags["Account-Type"]}-${var.tags["Agency-Code"]}-${var.tags["Project-Code"]}-${var.tags["Environment"]}"
 }
 
 resource "aws_s3_bucket" "state" {
-  bucket = "sst-s3-${var.Agency-Code}-${module.tags.desc}-tfstate"
+  bucket = "sst-s3-${local.environment}-tfstate"
   acl    = "private"
 
   server_side_encryption_configuration {
@@ -33,13 +27,13 @@ resource "aws_s3_bucket" "state" {
     prevent_destroy = false
   }
 
-  tags = merge(module.tags.tags, {
-    Name = "sst-s3-${var.Agency-Code}-${module.tags.desc}-tfstate"
+  tags = merge(var.tags, {
+    Name = "sst-s3-${local.environment}-tfstate"
   })
 }
 
 resource "aws_dynamodb_table" "lock" {
-  name         = "dbs-dynamodb-${module.tags.desc}-tflock"
+  name         = "dbs-dynamodb-${local.environment}-tflock"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"
 
@@ -48,7 +42,7 @@ resource "aws_dynamodb_table" "lock" {
     type = "S"
   }
 
-  tags = merge(module.tags.tags, {
-    Name = "dbs-dynamodb-${module.tags.desc}-tflock"
+  tags = merge(var.tags, {
+    Name = "dbs-dynamodb-${local.environment}-tflock"
   })
 }

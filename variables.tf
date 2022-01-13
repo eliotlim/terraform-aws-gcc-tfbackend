@@ -1,29 +1,27 @@
 # Backend details
-variable "Agency-Code" {
-  description = "The agency initials"
-  type        = string
-}
+variable "tags" {
+  description = "Resource tags describing: { Account-Type, Agency-Code, Project-Code, Environment }"
+  type        = map(string)
 
-variable "Project-Code" {
-  description = "The project code"
-  type        = string
-}
+  validation {
+    condition     = can(lookup(var.tags, "Account-Type"))
+    error_message = "The Account-Type tag should be specified (e.g. prod, sdlc)."
+  }
 
-variable "Environment" {
-  description = "The environment (e.g. tXX, dev, stg, uat, prd)"
-  type        = string
-}
+  validation {
+    condition     = can(lookup(var.tags, "Agency-Code"))
+    error_message = "The Agency-Code tag should be specified (e.g. abcd)."
+  }
 
-variable "Zone" {
-  description = "The zone (e.g. iz, ez, mz ,dz)"
-  type        = string
-  default     = null
-}
+  validation {
+    condition     = can(lookup(var.tags, "Project-Code"))
+    error_message = "The Project-Code tag should be specified (e.g. demo, abc3)."
+  }
 
-variable "Tier" {
-  description = "Tier identifier (e.g. web, gut, app, it, db, svc, na)"
-  type        = string
-  default     = null
+  validation {
+    condition     = can(lookup(var.tags, "Environment"))
+    error_message = "The Environment tag should be specified (e.g. tXX, dev, stg, uat, prd)."
+  }
 }
 
 # Configuration for Backend Resources
