@@ -32,6 +32,13 @@ resource "aws_s3_bucket" "state" {
   })
 }
 
+resource "aws_s3_bucket_public_access_block" "state" {
+  bucket = aws_s3_bucket.state.id
+
+  block_public_acls   = true
+  block_public_policy = true
+}
+
 resource "aws_dynamodb_table" "lock" {
   name         = "dbs-dynamodb-${local.environment}-tflock"
   billing_mode = "PAY_PER_REQUEST"
