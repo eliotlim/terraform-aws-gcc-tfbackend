@@ -21,7 +21,7 @@ switch-remote: backend.tfbackend remote.tf sync-after ## Store Terraform state i
 # The backend infrastructure is built step-by-step onto the currently configured state backend
 backend.tfbackend: sync-before $(terraform_files)
 	$(terraform) workspace select default
-	$(terraform) apply --auto-approve --var-file=$(backend_tfvars)
+	$(terraform) apply --var-file=$(backend_tfvars)
 	# Export the newly-created backend variables (adding quotes to values if Terraform <= 0.13)
 	$(terraform) output | sed 's/^\([a-zA-Z0-9_-]*\)\( *= *\)"*\([a-zA-Z0-9_\.-]*\)"*/\1 = "\3"/g'> $@
 
@@ -69,7 +69,7 @@ deploy: backend.tfbackend ## Deploy backend infrastructure
 
 destroy: switch-local ## Destroy backend infrastructure
 	# Destroy all the IaC resources for this backend
-	$(terraform) destroy --auto-approve --var-file=$(backend_tfvars)
+	$(terraform) destroy --var-file=$(backend_tfvars)
 
 distclean: ## Delete generated files, restoring working directory to distribution-ready state
 	# Cleanup and make module distribution-ready

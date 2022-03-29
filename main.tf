@@ -9,9 +9,19 @@ locals {
 resource "aws_s3_bucket" "state" {
   bucket = "sst-s3-${local.environment}-tfstate"
 
+  force_destroy = var.prevent_destroy == false
+
   tags = merge(var.tags, {
     Name = "sst-s3-${local.environment}-tfstate"
   })
+}
+
+resource "aws_s3_bucket_versioning" "state" {
+  bucket = aws_s3_bucket.state.bucket
+
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "state" {
